@@ -8,6 +8,8 @@ Syscall tracing from command line and as a library
 
 Work in progress, to be published
 
+**See the design draft: https://github.com/blaind/hstrace/blob/master/docs/01_hstrace_plan.md**
+
 ## Command line tool
 
 TODO
@@ -21,6 +23,13 @@ Add this to your `Cargo.toml`:
 ```toml
 [dependencies]
 hstrace = "0.0.2"
+```
+
+And this to your code:
+
+```toml
+// not yet implemented!
+// see the design draft: https://github.com/blaind/hstrace/blob/master/docs/01_hstrace_plan.md
 ```
 
 #### License
