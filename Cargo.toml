@@ -7,3 +7,6 @@ documentation = "https://docs.rs/hstrace"
 description = "Syscall tracing from command line and as a library"
 license = "Apache-2.0/MIT"
 edition = "2018"
+exclude = ["/.travis.yml", ".gitignore"]
+categories = ["command-line-interface", "development-tools::debugging"]
+keywords = ["strace", "syscall", "tracing", "linux"]
