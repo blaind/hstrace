@@ -20,7 +20,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-hstrace = "0.0.1"
+hstrace = "0.0.2"
 ```
 
 #### License

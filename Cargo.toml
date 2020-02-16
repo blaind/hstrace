@@ -1,6 +1,6 @@
 [package]
 name = "hstrace"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Mika Vatanen <blaind@blaind.net>"]
 repository = "https://github.com/blaind/hstrace"
 documentation = "https://docs.rs/hstrace"
@@ -10,3 +10,4 @@ edition = "2018"
 exclude = ["/.travis.yml", ".gitignore"]
 categories = ["command-line-interface", "development-tools::debugging"]
 keywords = ["strace", "syscall", "tracing", "linux"]
+readme = "README.md"
