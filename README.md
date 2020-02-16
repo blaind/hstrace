@@ -1,4 +1,4 @@
-Syscall tracing from command line and as a library
+Syscall tracing CLI & library
 ==================================================
 
 [![Build Status](https://api.travis-ci.org/blaind/hstrace.svg?branch=master)](https://travis-ci.org/blaind/hstrace)
@@ -22,15 +22,16 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-hstrace = "0.0.2"
+hstrace = "0.0.3"
 ```
 
 And this to your code:
 
 ```toml
 // not yet implemented!
-// see the design draft: https://github.com/blaind/hstrace/blob/master/docs/01_hstrace_plan.md
 ```
+
+See the design draft: https://github.com/blaind/hstrace/blob/master/docs/01_hstrace_plan.md
 
 #### License
 
