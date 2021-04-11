@@ -1,6 +1,6 @@
 [package]
 name = "hstrace"
-version = "0.0.3"
+version = "0.0.4"
 authors = ["Mika Vatanen <blaind@blaind.net>"]
 repository = "https://github.com/blaind/hstrace"
 documentation = "https://docs.rs/hstrace"
@@ -11,3 +11,36 @@ exclude = ["/.travis.yml", ".gitignore"]
 categories = ["command-line-interface", "development-tools::debugging"]
 keywords = ["strace", "syscall", "tracing", "linux"]
 readme = "README.md"
+
+[dependencies]
+hstrace_derive = { path = "hstrace_derive" }
+
+# logging
+log = "0.4.14"
+env_logger = "0.8.3"
+
+# FromPrimitive
+num-traits = "0.2.14"
+num-derive = "0.3.3"
+
+# Coloring of messages
+colored = "2.0.0"
+
+# Arguments for main
+clap = { version = "2.33.3", features = ["yaml"] }
+
+# Improved channels
+crossbeam-channel = "0.5.1"
+
+# Others
+nix = "0.17.0" # see https://github.com/nix-rust/nix/pull/1422
+bitflags = "1.2.1"
+crossbeam-utils = "0.8.3"
+ctrlc = "3.1.8"
+lazy_static = "1.4.0"
+
+[build-dependencies]
+bindgen = "0.58.1"
+
+[dev-dependencies]
+serial_test = "0.5.1"

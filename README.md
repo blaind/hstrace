@@ -6,13 +6,42 @@ Syscall tracing CLI & library
 [![Rust Documentation](https://docs.rs/hstrace/badge.svg)](https://docs.rs/hstrace)
 ![License](https://img.shields.io/crates/l/hstrace.svg)
 
-Work in progress, to be published
+Syscall tracing from command line and as a library. See the design draft: https://github.com/blaind/hstrace/blob/master/docs/01_hstrace_plan.md
 
-**See the design draft: https://github.com/blaind/hstrace/blob/master/docs/01_hstrace_plan.md**
+**This is a WIP implementation, and not production ready. Might not be finished**. Multiple issues exist: 1) codebase is not ready to be expanded yet, major refactoring is needed especially for the `AV` and `Value` structs to be more generic, 2) attach to process is not instant, some calls are missed at beginning, 3) not all syscalls are implemented, 4) cross-platform support is missing, 5) as a comparison, `strace` codebase is over 200k LoC in total (incl comments), so finishing the work is quite an undertaking
 
 ## Command line tool
 
-TODO
+![Syscall-output](docs/cli-hstrace.png)
+
+Install the binary:
+```
+$ cargo install hstrace
+```
+
+Run the command
+```
+$ hstrace -h
+
+hstrace for stracing processes
+
+USAGE:
+    hstrace [FLAGS] [OPTIONS] <prog>...
+
+FLAGS:
+    -h, --help         Prints help information
+        --no-follow    Do not follow child processes as they are created
+    -V, --version      Prints version information
+
+OPTIONS:
+    -e <expr>           Expression
+    -m <mode>           Run mode [default: strace]
+    -p <pid>            PID to trace
+    -s <strsize>        Maximum length of printable strings [default: 32]
+
+ARGS:
+    <prog>...    Program to strace
+```
 
 ## Stracing library
 
@@ -22,16 +51,36 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-hstrace = "0.0.3"
+hstrace = "0.0.4"
 ```
 
 And this to your code:
 
-```toml
-// not yet implemented!
+```rust
+use hstrace::prelude::*;
+
+fn main() {
+    let mut tracer = HStraceBuilder::new().program("ps").arg("uxaw").build();
+
+    tracer.start().unwrap();
+
+    for syscall in tracer.iter_as_syscall() {
+        match syscall.name {
+            hstrace::Ident::Openat | hstrace::Ident::Fstat | hstrace::Ident::Stat => {
+                println!("File operation detected: {:?}", syscall);
+            }
+
+            hstrace::Ident::Socket | hstrace::Ident::Bind | hstrace::Ident::Connect => {
+                println!("Network operation detected: {:?}", syscall);
+            }
+
+            _ => (),
+        }
+    }
+}
 ```
 
-See the design draft: https://github.com/blaind/hstrace/blob/master/docs/01_hstrace_plan.md
+See [examples/03_match_syscall_name.rs](examples/03_match_syscall_name.rs) and other [examples](examples).
 
 #### License
 

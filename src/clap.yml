@@ -1,0 +1,30 @@
+name: hstrace
+version: "0.0.1"
+about: hstrace for stracing processes
+author: Mika Vatanen <blaind@blaind.net>
+
+args:
+  - expr:
+      help: Expression
+      short: e
+      takes_value: true
+  - no-follow:
+      long: no-follow
+      help: Do not follow child processes as they are created
+  - mode:
+      help: Run mode
+      short: m
+      default_value: strace
+  - pid:
+      help: PID to trace
+      short: p
+      takes_value: true
+  - prog:
+      help: Program to strace
+      required_unless: pid
+      multiple: true
+  - strsize:
+      short: s
+      help: Maximum length of printable strings
+      takes_value: true
+      default_value: "32"

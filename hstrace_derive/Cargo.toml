@@ -1,0 +1,15 @@
+[package]
+name = "hstrace_derive"
+version = "0.0.1"
+license = "Apache-2.0/MIT"
+edition = "2018"
+
+[dependencies]
+log = "0.4.8"
+syn = "1.0.14"
+quote = "1.0.2"
+proc-macro2 = "1.0.8"
+
+[lib]
+name = "hstrace_derive"
+proc-macro = true

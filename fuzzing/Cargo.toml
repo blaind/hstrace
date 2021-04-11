@@ -1,0 +1,12 @@
+[package]
+name = "fuzzing"
+version = "0.0.1"
+license = "Apache-2.0/MIT"
+edition = "2018"
+
+[dependencies]
+log = "0.4.8"
+log4rs = "0.10.0"
+afl = "0.10.0"
+hstrace = { path = ".." }
+crossbeam-channel = "0.5.1"
