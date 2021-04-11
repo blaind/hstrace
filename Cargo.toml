@@ -13,7 +13,7 @@ keywords = ["strace", "syscall", "tracing", "linux"]
 readme = "README.md"
 
 [dependencies]
-hstrace_derive = { path = "hstrace_derive" }
+hstrace_derive = { path = "hstrace_derive", version = "0.0.1" }
 
 # logging
 log = "0.4.14"

@@ -19,9 +19,9 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 
-    std::process::Command::new("make")
-        .args(&["compile_main"])
-        .current_dir("data/c_code")
-        .spawn()
-        .expect("Build test C");
+    //std::process::Command::new("make")
+    //    .args(&["compile_main"])
+    //    .current_dir("data/c_code")
+    //    .spawn()
+    //    .expect("Build test C");
 }
