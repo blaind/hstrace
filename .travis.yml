@@ -8,7 +8,7 @@ jobs:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get -y install libclang1 libc6-dev
+  - sudo apt-get -y install libclang1 libc6-dev linux-libc-dev
 
 script:
   - make -C data/c_code -f Makefile
