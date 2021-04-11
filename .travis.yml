@@ -6,7 +6,12 @@ jobs:
     - rust: stable
     - rust: nightly
 
+before_install:
+  - sudo apt-get update
+  - sudo apt-get -y install libclang1
+
 script:
+  - make -C data/c_code -f Makefile
   - cargo test --all
 
 notifications:

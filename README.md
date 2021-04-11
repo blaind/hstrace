@@ -10,6 +10,13 @@ Syscall tracing from command line and as a library. See the design draft: https:
 
 **This is a WIP implementation, and not production ready. Might not be finished**. Multiple issues exist: 1) codebase is not ready to be expanded yet, major refactoring is needed especially for the `AV` and `Value` structs to be more generic, 2) attach to process is not instant, some calls are missed at beginning, 3) not all syscalls are implemented, 4) cross-platform support is missing, 5) as a comparison, `strace` codebase is over 200k LoC in total (incl comments), so finishing the work is quite an undertaking
 
+## Prequisites
+
+Install dependencies:
+```
+$ apt-get install libclang1
+```
+
 ## Command line tool
 
 ![Syscall-output](docs/cli-hstrace.png)

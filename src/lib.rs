@@ -27,10 +27,6 @@
 //! }
 */
 
-#![feature(test)]
-#![feature(core_intrinsics)]
-#![feature(arbitrary_enum_discriminant)]
-
 #[macro_use]
 extern crate num_derive;
 
