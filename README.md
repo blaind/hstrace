@@ -1,7 +1,7 @@
 Syscall tracing CLI & library
 ==================================================
 
-[![Build Status](https://api.travis-ci.org/blaind/hstrace.svg?branch=master)](https://travis-ci.org/blaind/hstrace)
+[![Build Status](https://img.shields.io/github/workflow/status/blaind/hstrace/test)](https://github.com/blaind/hstrace/actions?query=branch%3Amaster)
 [![Latest Version](https://img.shields.io/crates/v/hstrace.svg)](https://crates.io/crates/hstrace)
 [![Rust Documentation](https://docs.rs/hstrace/badge.svg)](https://docs.rs/hstrace)
 ![License](https://img.shields.io/crates/l/hstrace.svg)
