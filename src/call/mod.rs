@@ -10,6 +10,7 @@
 
 use num_traits::FromPrimitive;
 use serde::Serialize;
+use std::collections::HashMap;
 use std::fmt;
 
 use crate::syscall::{Definition, Direction};

@@ -1,11 +1,15 @@
 use crate::value::{Value, AV};
-use std::fmt::{self, Debug};
+use std::{
+    collections::HashMap,
+    fmt::{self, Debug},
+};
 
 mod error;
 pub use error::*;
 
 #[cfg(target_arch = "x86_64")]
 mod x86_64;
+use serde::Serialize;
 #[cfg(target_arch = "x86_64")]
 pub use x86_64::*;
 
@@ -68,8 +72,12 @@ impl<'a> Definitions<'a> {
         self.definitions.push(definition);
     }
 
-    pub fn into_definitions(self) -> Vec<Definition<'a>> {
-        self.definitions
+    pub fn into_definitions_hashmap(self) -> HashMap<usize, Definition<'a>> {
+        let mut hashmap = HashMap::with_capacity(self.definitions.len());
+        for definition in self.definitions {
+            hashmap.insert(definition.call_nr, definition);
+        }
+        hashmap
     }
 }
 
@@ -138,3 +146,18 @@ pub trait VarType: Send + Sync {
 }
 
 pub trait VarOutType: Send + Sync + Debug {}
+
+impl fmt::Display for Ident {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+impl Serialize for Ident {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.to_string().to_lowercase())
+    }
+}

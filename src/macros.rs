@@ -10,14 +10,14 @@ macro_rules! define_modules {
         )+
 
         lazy_static! {
-            pub(crate) static ref SYSCALLS: Vec<Definition<'static>> = {
+            pub(crate) static ref SYSCALLS: HashMap<usize, Definition<'static>> = {
                 let mut definitions = Definitions::new();
 
                 $(
                     $module_name::get_definitions(&mut definitions);
                 )+
 
-                definitions.into_definitions()
+                definitions.into_definitions_hashmap()
             };
         }
     };
@@ -135,28 +135,11 @@ macro_rules! define_callnames {
         $($syscall:ident = $position:tt,)+
     ) => {
         #[allow(dead_code)]
-        #[derive(FromPrimitive, Debug, PartialEq, Clone, Copy, Serialize)]
+        #[derive(FromPrimitive, Debug, PartialEq, Clone, Copy)]
         pub enum Ident {
             /// Unknown call, nr could not be parsed into an enum (missing implementation at hstrace)
             Unknown = -1,
             $($syscall = $position,)*
-        }
-
-        impl Ident {
-            pub fn iter() -> Iter<'static, Ident> {
-                // FIXME: get the number in macro invocation
-                static CALLNAMES: [Ident; 347] = [
-                    $(Ident::$syscall,)+
-                ];
-
-                CALLNAMES.iter()
-            }
-        }
-
-        impl fmt::Display for Ident {
-            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-                write!(f, "{:?}", self)
-            }
         }
     };
 }

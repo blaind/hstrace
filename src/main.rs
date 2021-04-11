@@ -77,6 +77,7 @@ fn parse_settings() -> ParsedOptions {
     };
 
     let mut display_mode = match m.value_of("mode").unwrap() {
+        "json" => DisplayMode::Json,
         "human" => DisplayMode::Human,
         "devnull" => DisplayMode::DevNull,
         "strace" => DisplayMode::Strace,

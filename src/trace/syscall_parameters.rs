@@ -35,8 +35,7 @@ impl<'a> SyscallParameters<'a> {
     }
 
     pub(crate) fn get_definition(&self) -> Option<&'a Definition> {
-        // FIXME cache this! -> make SYSCALLS to be a hashmap
-        SYSCALLS.iter().find(|sc| sc.call_nr == self.nr)
+        SYSCALLS.get(&self.nr)
     }
 
     pub(crate) fn get_ident(&self) -> Option<Ident> {
