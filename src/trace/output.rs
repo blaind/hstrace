@@ -113,7 +113,7 @@ impl fmt::Debug for TraceOutput {
         let out_var = match self.out.as_ref() {
             Some(o) => match o {
                 Ok(o) => format!("{:?}", o).green(),
-                Err(e) => format!("-1 {:?} ({})", e, e.desc()).magenta(),
+                Err(e) => format!("-1 {:?} ({})", e, e.to_errno().desc()).magenta(),
             },
             None => format!("?").yellow(),
         };

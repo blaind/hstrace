@@ -36,6 +36,8 @@ FLAGS:
 OPTIONS:
     -e <expr>           Expression
     -m <mode>           Run mode [default: strace]
+    -o <file>           Save output to a file instead of stderr. If suffix is `.json`, will be stored in JSON-format
+                        (format subject to change)
     -p <pid>            PID to trace
     -s <strsize>        Maximum length of printable strings [default: 32]
 

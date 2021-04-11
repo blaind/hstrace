@@ -218,7 +218,7 @@ mod tests {
 
     use super::*;
     use crate::ptrace::MockPtrace;
-    use crate::SyscallError;
+    use crate::Errno;
 
     fn init() {
         let _ = env_logger::builder().is_test(true).try_init();
@@ -327,7 +327,10 @@ mod tests {
         ])
         .unwrap();
 
-        assert_eq!(output.out.unwrap().unwrap_err(), SyscallError::UnknownErrno);
+        assert_eq!(
+            output.out.unwrap().unwrap_err().to_errno(),
+            Errno::UnknownErrno
+        );
     }
 
     #[test]

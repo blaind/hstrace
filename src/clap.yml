@@ -15,6 +15,11 @@ args:
       help: Run mode
       short: m
       default_value: strace
+  - output_file:
+      help: Save output to a file instead of stderr. If suffix is `.json`, will be stored in JSON-format (format subject to change)
+      value_name: file
+      short: o
+      takes_value: true
   - pid:
       help: PID to trace
       short: p

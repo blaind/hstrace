@@ -31,7 +31,7 @@ macro_rules! define_calls {
         ///
         /// Currently only a subset of syscalls are resolved to these expanded structures
         /// Use this [GitHub issue 3](https://github.com/blaind/hstrace/issues/3) to request a new syscall implementation
-        #[derive(Debug, PartialEq)]
+        #[derive(Debug, PartialEq, Serialize)]
         #[allow(non_camel_case_types)]
         pub enum SyscallKind {
             $($kind($kind),)*
@@ -48,13 +48,13 @@ macro_rules! define_calls {
         }
 
         impl From<TraceOutput> for Syscall {
-            fn from(sv: TraceOutput) -> Syscall {
+            fn from(mut sv: TraceOutput) -> Syscall {
                 let name = FromPrimitive::from_usize(sv.nr).expect("primitive conversion");
 
-                let result = match &sv.out {
+                let result = match sv.out.take() {
                     Some(res) => match res {
                         Ok(_) => Ok(()), // FIXME implement value
-                        Err(e) => Err(e.clone()),
+                        Err(e) => Err(e),
                     }
                     None => Ok(())
                 };
@@ -135,7 +135,7 @@ macro_rules! define_callnames {
         $($syscall:ident = $position:tt,)+
     ) => {
         #[allow(dead_code)]
-        #[derive(FromPrimitive, Debug, PartialEq, Clone, Copy)]
+        #[derive(FromPrimitive, Debug, PartialEq, Clone, Copy, Serialize)]
         pub enum Ident {
             /// Unknown call, nr could not be parsed into an enum (missing implementation at hstrace)
             Unknown = -1,

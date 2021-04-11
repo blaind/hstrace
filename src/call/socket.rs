@@ -1,4 +1,5 @@
 use super::prelude::*;
+use serde::Serialize;
 
 pub(crate) fn get_definitions(inp: &mut Definitions) {
     inp.add(
@@ -17,7 +18,7 @@ pub(crate) fn get_definitions(inp: &mut Definitions) {
 }
 
 /// Syscall: Create an endpoint for communication
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Open {:?} domain socket with type {:?} and protocol {:?}", self.domain, self.socket_type, self.protocol))]
 pub struct Socket {
     #[hstrace]
@@ -41,7 +42,7 @@ pub enum SockAddr {
 
 /// Argument: Communication domain / protocol family used
 #[allow(dead_code, non_camel_case_types)]
-#[derive(Debug, Clone, FromPrimitive, PartialEq)]
+#[derive(Debug, Clone, FromPrimitive, PartialEq, Serialize)]
 #[repr(isize)]
 pub enum AddressFamily {
     AF_UNSPEC = libc::AF_UNSPEC as isize,
@@ -53,6 +54,7 @@ pub enum AddressFamily {
 
 bitflags! {
     /// Argument: Socket communication semantics
+    #[derive(Serialize)]
     pub struct SocketType: isize {
         const SOCK_STREAM = libc::SOCK_STREAM as isize;
         const SOCK_DGRAM = libc::SOCK_DGRAM as isize;

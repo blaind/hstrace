@@ -1,4 +1,5 @@
 use super::prelude::*;
+use serde::Serialize;
 
 pub(crate) fn get_definitions(inp: &mut Definitions) {
     inp.add(
@@ -17,7 +18,7 @@ pub(crate) fn get_definitions(inp: &mut Definitions) {
 }
 
 /// Syscall: Start swapping to file/device
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Enable swap for path {:?} with flags {:?}", self.path, self.swapflags))]
 pub struct Swapon {
     #[hstrace]
@@ -28,7 +29,7 @@ pub struct Swapon {
 }
 
 /// Syscall: Stop swap on file/device
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Disable swap path {}", self.path))]
 pub struct Swapoff {
     #[hstrace]

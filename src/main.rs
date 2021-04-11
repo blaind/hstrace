@@ -1,21 +1,29 @@
 use clap::App;
 use colored::Colorize;
 use env_logger;
-use std::env;
+use std::{env, path::PathBuf};
 
-use hstrace::{FilterMode, HStrace, TraceOptions, TraceType};
+use hstrace::{FilterMode, HStrace, Output, TraceOptions, TraceType};
 
 fn main() {
     init_logger();
     let mut options = parse_settings();
-    let mut hstrace = initialize_hstrace(&mut options);
+    log::debug!("Parsed options: {:#?}", options);
+
+    let is_json = match options.display_mode {
+        DisplayMode::Json => true,
+        _ => false,
+    };
+
+    let mut out = Output::new(&options.output_file, is_json);
+    let mut hstrace = initialize_hstrace(&mut options, &mut out);
 
     if let Err(e) = hstrace.start() {
-        println!("{}: {:?}", format!("Trace failed").red(), e);
+        out.write(format!("{}: {:?}", format!("Trace failed").red(), e));
         return;
     };
 
-    display_output(&options, hstrace);
+    display_output(&options, hstrace, &mut out);
 }
 
 fn init_logger() {
@@ -30,13 +38,15 @@ fn register_quit_channel() -> crossbeam_channel::Receiver<()> {
     let (quit_sender, exit_receiver) = crossbeam_channel::bounded(1);
 
     ctrlc::set_handler(move || {
-        println!("Received ctrl-c, quitting...");
+        eprintln!("Received ctrl-c, quitting...");
         if let Err(e) = quit_sender.send(()) {
             log::debug!(
                 "Could not send quit_sender msg, possibly receiving end died already: {:?}",
                 e
             );
         }
+
+        // FIXME: should reset terminal here, e.g. after -o test.txt top ctrl-c will fail
     })
     .unwrap();
 
@@ -66,7 +76,7 @@ fn parse_settings() -> ParsedOptions {
         }
     };
 
-    let display_mode = match m.value_of("mode").unwrap() {
+    let mut display_mode = match m.value_of("mode").unwrap() {
         "human" => DisplayMode::Human,
         "devnull" => DisplayMode::DevNull,
         "strace" => DisplayMode::Strace,
@@ -75,6 +85,14 @@ fn parse_settings() -> ParsedOptions {
     };
 
     let mut filter_calls = Vec::new();
+
+    let output_file = m.value_of("output_file").map(|f| PathBuf::from(f));
+    if let Some(path) = &output_file {
+        if path.extension() == Some(std::ffi::OsStr::new("json")) {
+            log::debug!("Setting DisplayMode to Json, because file suffix is .json");
+            display_mode = DisplayMode::Json;
+        }
+    }
 
     // FIXME move to loop
     let _expr: Vec<String> = m
@@ -113,36 +131,41 @@ fn parse_settings() -> ParsedOptions {
         trace_type: Some(trace_type),
         display_mode,
         trace_options: Some(trace_options),
+        output_file,
     }
 }
 
+#[derive(Debug)]
 enum DisplayMode {
+    Json,
     Human,
     DevNull,
     Strace,
     Grouped,
 }
 
+#[derive(Debug)]
 struct ParsedOptions {
     display_mode: DisplayMode,
     trace_type: Option<TraceType>,
     trace_options: Option<TraceOptions>,
+    output_file: Option<PathBuf>,
 }
 
-fn initialize_hstrace(options: &mut ParsedOptions) -> HStrace {
+fn initialize_hstrace(options: &mut ParsedOptions, out: &mut Output) -> HStrace {
     let trace_type = options.trace_type.take().unwrap();
 
     match &trace_type {
         TraceType::Program(prog, args) => {
-            println!(
+            out.write(format!(
                 "Tracing program {} with args {}",
                 prog.cyan(),
-                format!("{:?}", args).cyan()
-            );
+                format!("{:?}", args).cyan(),
+            ));
         }
 
         TraceType::Pid(pid) => {
-            println!("Tracing PID {}", format!("{}", pid).cyan());
+            out.write(format!("Tracing PID {}", format!("{}", pid).cyan()));
         }
     };
 
@@ -155,13 +178,19 @@ fn initialize_hstrace(options: &mut ParsedOptions) -> HStrace {
     hstrace
 }
 
-fn display_output(options: &ParsedOptions, mut hstrace: HStrace) {
+fn display_output(options: &ParsedOptions, mut hstrace: HStrace, out: &mut Output) {
     let max_msg_count = 4_000_000_000_000_000; // FIXME
 
     match &options.display_mode {
         DisplayMode::Human => {
             for msg in hstrace.iter_as_syscall().take(max_msg_count) {
-                println!("{}", msg.fmt_human());
+                out.write(format!("{}", msg.fmt_human()));
+            }
+        }
+
+        DisplayMode::Json => {
+            for msg in hstrace.iter_as_syscall().take(max_msg_count) {
+                out.write_json(serde_json::to_string(&msg).unwrap());
             }
         }
 
@@ -173,23 +202,23 @@ fn display_output(options: &ParsedOptions, mut hstrace: HStrace) {
 
         DisplayMode::Strace => {
             for msg in hstrace.iter().take(max_msg_count) {
-                println!("{:?}", msg);
+                out.write(format!("{:?}", msg));
             }
         }
 
         DisplayMode::Grouped => {
             for msg in hstrace.iter_grouped().take(max_msg_count) {
                 if msg.calls.len() == 1 {
-                    println!("{}", format!("{:?}", msg.calls[0]));
+                    out.write(format!("{}", format!("{:?}", msg.calls[0])));
                 } else {
-                    println!("{}", "File operations for file something");
+                    out.write(format!("{}", "File operations for file something"));
                     for call in msg.calls {
-                        println!("    {:?}", call);
+                        out.write(format!("    {:?}", call));
                     }
                 }
             }
         }
     }
 
-    hstrace.print_totals();
+    hstrace.print_totals(out);
 }

@@ -1,5 +1,6 @@
 use std::convert::TryFrom;
 
+use crate::Errno;
 use crate::{SyscallError, VarType};
 
 mod transformer;
@@ -55,10 +56,10 @@ pub(crate) fn map_output(out: &AV, is_error: u8, rval: i64) -> Result<Value, Sys
     if is_error > 0 {
         match i32::try_from(
             rval.checked_mul(-1)
-                .ok_or_else(|| SyscallError::UnknownErrno)?,
+                .ok_or_else(|| SyscallError::from_errno(Errno::UnknownErrno))?,
         ) {
             Ok(val) => Err(SyscallError::from_i32(val)),
-            Err(_) => return Err(SyscallError::UnknownErrno),
+            Err(_) => return Err(SyscallError::from_errno(Errno::UnknownErrno)),
         }
     } else {
         Ok(match out {
@@ -79,16 +80,20 @@ mod tests {
     #[test]
     pub fn test_map_output_overflow() {
         assert_eq!(
-            map_output(&AV::Int(Direction::Out), 23, -9223372036854775808).unwrap_err(),
-            SyscallError::UnknownErrno
+            map_output(&AV::Int(Direction::Out), 23, -9223372036854775808)
+                .unwrap_err()
+                .to_errno(),
+            Errno::UnknownErrno
         );
     }
 
     #[test]
     pub fn test_map_output() {
         assert_eq!(
-            map_output(&AV::Int(Direction::Out), 23, -1).unwrap_err(),
-            SyscallError::EPERM
+            map_output(&AV::Int(Direction::Out), 23, -1)
+                .unwrap_err()
+                .to_errno(),
+            Errno::EPERM
         );
 
         match map_output(&AV::Int(Direction::Out), 0, 50).unwrap() {

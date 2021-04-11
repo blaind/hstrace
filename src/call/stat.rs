@@ -1,5 +1,6 @@
 use super::prelude::*;
 use crate::from_c::stat as sys_stat;
+use serde::Serialize;
 
 pub(crate) fn get_definitions(inp: &mut Definitions) {
     inp.add(
@@ -17,7 +18,7 @@ pub(crate) fn get_definitions(inp: &mut Definitions) {
     );
 }
 
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Stat path {:?} returned {:?}", self.pathname, self.stat))]
 pub struct Stat {
     #[hstrace]
@@ -27,7 +28,7 @@ pub struct Stat {
     pub stat: StatResult,
 }
 
-#[derive(Debug, Clone, PartialEq, FromCStruct)]
+#[derive(Debug, Clone, PartialEq, FromCStruct, Serialize)]
 #[hstrace(c_struct = sys_stat)]
 pub struct StatResult {
     // st_dev=makedev(0xfd, 0),

@@ -1,5 +1,6 @@
 use super::prelude::*;
 use crate::from_c::utsname as sys_utsname;
+use serde::Serialize;
 
 pub(crate) fn get_definitions(inp: &mut Definitions) {
     inp.add(
@@ -10,14 +11,14 @@ pub(crate) fn get_definitions(inp: &mut Definitions) {
     );
 }
 
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Detected uname to be {:?}", self.utsname))]
 pub struct Uname {
     #[hstrace(c_struct = sys_utsname)]
     pub utsname: Utsname,
 }
 
-#[derive(Debug, Clone, PartialEq, FromCStruct)]
+#[derive(Debug, Clone, PartialEq, FromCStruct, Serialize)]
 #[hstrace(c_struct = sys_utsname)]
 pub struct Utsname {
     #[hstrace(c_char)]

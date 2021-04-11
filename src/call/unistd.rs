@@ -1,4 +1,5 @@
 use super::prelude::*;
+use serde::Serialize;
 
 pub(crate) fn get_definitions(inp: &mut Definitions) {
     inp.add(
@@ -75,7 +76,7 @@ pub(crate) fn get_definitions(inp: &mut Definitions) {
 }
 
 /// Syscall: Read value of a symbolic link
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("{:?} symlink points to {:?}", self.src, self.dst))]
 pub struct Readlink {
     /// Source file
@@ -87,7 +88,7 @@ pub struct Readlink {
     pub dst: Option<String>,
 }
 
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Check path {:?} permissions for mode {:?}", self.pathname, self.mode))]
 pub struct Access {
     #[hstrace]
@@ -97,14 +98,14 @@ pub struct Access {
     pub mode: AccessMode,
 }
 
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Resolved current path to {:?}", self.pathname))]
 pub struct Getcwd {
     #[hstrace]
     pub pathname: Option<String>,
 }
 
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Closed file descriptor {:?}", self.fd))]
 pub struct Close {
     /// File descriptor
@@ -112,7 +113,7 @@ pub struct Close {
     pub fd: isize,
 }
 
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Request memory address expansion to {:?}", self.addr))]
 pub struct Brk {
     /// Expand to memory address
@@ -120,7 +121,7 @@ pub struct Brk {
     pub addr: MemoryAddress,
 }
 
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Change working directory to {:?}", self.path))]
 pub struct Chdir {
     /// Working directory
@@ -129,6 +130,7 @@ pub struct Chdir {
 }
 
 bitflags! {
+    #[derive(Serialize)]
     pub struct AccessMode: isize {
         const R_OK = 4;
         const W_OK = 2;

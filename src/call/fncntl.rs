@@ -1,4 +1,5 @@
 use super::prelude::*;
+use serde::Serialize;
 
 pub(crate) fn get_definitions(inp: &mut Definitions) {
     inp.add(
@@ -16,7 +17,7 @@ pub(crate) fn get_definitions(inp: &mut Definitions) {
     );
 }
 
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Open a file (dirfd: {}) {} with flags {:?}", self.dirfd, self.pathname, self.flags))]
 pub struct Openat {
     #[hstrace]
@@ -31,6 +32,7 @@ pub struct Openat {
 }
 
 bitflags! {
+    #[derive(Serialize)]
     pub struct OpenatMode: isize {
         const O_ACCMODE = 0o0003;
         const O_RDONLY = 0o0;

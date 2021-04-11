@@ -1,4 +1,5 @@
 use super::prelude::*;
+use serde::Serialize;
 
 pub(crate) fn get_definitions(inp: &mut Definitions) {
     inp.add(
@@ -15,7 +16,7 @@ pub(crate) fn get_definitions(inp: &mut Definitions) {
 }
 
 /// Syscall: Transfer data between file descriptors
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Transfer data to fd {:?} from fd {:?} offset {:?} len {:?}", self.out_fd, self.in_fd, self.offset, self.count))]
 pub struct Sendfile {
     /// FD where data is sent

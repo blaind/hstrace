@@ -9,6 +9,7 @@
 //! Use this [GitHub issue 3](https://github.com/blaind/hstrace/issues/3) to request a new syscall implementation
 
 use num_traits::FromPrimitive;
+use serde::Serialize;
 use std::fmt;
 
 use crate::syscall::{Definition, Direction};

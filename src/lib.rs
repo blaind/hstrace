@@ -7,7 +7,7 @@
 //! ```
 //! use hstrace::prelude::*;
 //!
-//! // initializes and strats tracing
+//! // initializes and starts tracing
 //! let mut tracer = HStraceBuilder::new()
 //!     .pid(1000).build();
 //! tracer.start();
@@ -50,11 +50,13 @@ mod syscall;
 mod enums;
 mod from_c;
 
+mod output;
 pub mod ptrace;
 mod trace;
 mod trace_grouper;
 mod traits;
 pub mod value;
+pub use output::*;
 
 use crate::traits::hmz_format;
 pub use call::SyscallKind;
@@ -62,11 +64,10 @@ pub(crate) use ptrace::Tracer;
 pub use syscall::*;
 pub use trace::*;
 
-/// Result of the syscall invocation. If syscall returns `-1`, `errno` is resolved into specific `SyscallError` enum variant
-pub type SyscallResult = Result<(), SyscallError>;
+use serde::Serialize;
 
 /// Resolved system call
-#[derive(Debug)]
+#[derive(Serialize, Debug)]
 pub struct Syscall {
     /// Call that was made (enum variant). Resolved to correct one in 95%+ of cases. If not known, contains `Ident::Unknown`
     pub name: Ident,
@@ -75,11 +76,11 @@ pub struct Syscall {
     pub kind: SyscallKind,
 
     /// Result of the syscall (success, or an error)
-    pub result: SyscallResult,
+    pub result: Result<(), SyscallError>,
 }
 
 impl Syscall {
-    pub(crate) fn new(name: Ident, kind: SyscallKind, result: SyscallResult) -> Self {
+    pub(crate) fn new(name: Ident, kind: SyscallKind, result: Result<(), SyscallError>) -> Self {
         Syscall { name, kind, result }
     }
 

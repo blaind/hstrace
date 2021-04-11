@@ -2,6 +2,7 @@ use colored::Colorize;
 use crossbeam_channel;
 use std::sync::mpsc;
 
+use crate::Output;
 use crate::TraceError;
 use crate::{
     ptrace::{SyscallPtrace, Tracer},
@@ -94,18 +95,18 @@ impl HStrace {
             .map(|message| Syscall::from(message))
     }
 
-    pub fn print_totals(&self) {
-        println!(
+    pub fn print_totals(&self, out: &mut Output) {
+        out.write(format!(
             "{}",
             format!("-------------------------------------------------------------").blue()
-        );
-        println!(
+        ));
+        out.write(format!(
             "{}:    0, {}: 2352kB",
             format!("Pids").magenta(),
             format!("Max memory usage").magenta()
-        );
+        ));
 
-        println!(
+        out.write(format!(
             "Network: {}, {}",
             format!(
                 "{} (main, {}/{})",
@@ -119,22 +120,22 @@ impl HStrace {
                 "52b".green(),
                 "52b".green()
             ),
-        );
+        ));
 
-        println!(
+        out.write(format!(
             "Files:   {}, {}, (5 supressed)",
             format!("{} ({})", "/etc/passwd".cyan(), "RW".red(),),
             format!("{} ({})", "/usr/include/test.h".cyan(), "R".green(),),
-        );
+        ));
 
-        println!(
+        out.write(format!(
             "{}:    run with --file-all to view all files",
             format!("Info").magenta()
-        );
+        ));
 
-        println!(
+        out.write(format!(
             "^ above information is not real data, but displays a possibility of adding a summary"
-        );
+        ));
     }
 }
 

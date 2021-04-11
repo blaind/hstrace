@@ -3,7 +3,7 @@ use std::env;
 
 use hstrace::value::kind::MemoryAddress;
 use hstrace::{call, Ident};
-use hstrace::{prelude::*, HStraceBuilder};
+use hstrace::{prelude::*, Errno, HStraceBuilder, SyscallError};
 
 fn init() {
     let _ = env_logger::builder().is_test(true).try_init();
@@ -147,7 +147,7 @@ fn test_unistd() {
             src: "/tmp/link_src".into(),
             dst: None,
         },
-        Err(SyscallError::ENOENT)
+        Err(SyscallError::from_errno(Errno::ENOENT))
     );
 
     test_syscall!(iterator, ExitGroup);
@@ -169,7 +169,7 @@ fn test_fncntl() {
             pathname: "/tmp/hstrace.test".into(),
             flags: call::OpenatMode::O_WRONLY | call::OpenatMode::O_APPEND,
         },
-        Err(SyscallError::ENOENT)
+        Err(SyscallError::from_errno(Errno::ENOENT))
     );
 
     test_syscall!(iterator, ExitGroup);
@@ -190,7 +190,7 @@ fn test_swap() {
             path: "/tmp/ptrace/swap".into(),
             swapflags: 65536, //call::SwapFlag::SWAP_FLAG_DISCARD,
         },
-        Err(SyscallError::EPERM)
+        Err(SyscallError::from_errno(Errno::EPERM))
     );
 
     test_syscall!(
@@ -199,7 +199,7 @@ fn test_swap() {
         call::Swapoff {
             path: "/tmp/ptrace/swap".into(),
         },
-        Err(SyscallError::EPERM)
+        Err(SyscallError::from_errno(Errno::EPERM))
     );
 
     test_syscall!(iterator, ExitGroup);

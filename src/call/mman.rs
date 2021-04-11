@@ -1,4 +1,5 @@
 use super::prelude::*;
+use serde::Serialize;
 
 pub(crate) fn get_definitions(inp: &mut Definitions) {
     inp.add(
@@ -42,7 +43,7 @@ pub(crate) fn get_definitions(inp: &mut Definitions) {
     );
 }
 
-#[derive(Debug, PartialEq, FromPtrace)]
+#[derive(Debug, PartialEq, FromPtrace, Serialize)]
 #[hstrace(hmz("Protect memory {:?} - {:?} (len {}) with flags {:?}",
     self.addr,
     MemoryAddress(self.addr.0 + self.len),
@@ -61,6 +62,7 @@ pub struct Mprotect {
 }
 
 bitflags! {
+    #[derive(Serialize)]
     pub struct Prot: isize {
         const PROT_READ = 0x1;
         const PROT_WRITE = 0x2;
