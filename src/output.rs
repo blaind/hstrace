@@ -15,6 +15,7 @@ impl Output {
         let mut inner: Box<dyn Write> = match output_file {
             Some(file) => {
                 let file = fs::File::create(file).unwrap();
+                colored::control::set_override(false);
                 Box::new(file)
             }
             None => Box::new(io::stdout()),

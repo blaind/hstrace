@@ -130,3 +130,24 @@ impl fmt::Debug for TraceOutput {
         )
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    pub fn test_output_debug() {
+        let output = TraceOutput::new(
+            Ident::Brk,
+            Ident::Brk as usize,
+            vec![Value::Int(50), Value::Int(10)],
+            50,
+        );
+
+        colored::control::set_override(false);
+        assert_eq!(format!("{:?}", output), "[50] brk(50, 10) = ?");
+
+        colored::control::set_override(true);
+        assert_eq!(format!("{:?}", output), "[50] \u{1b}[33mbrk\u{1b}[0m\u{1b}[35m(\u{1b}[0m\u{1b}[36m50\u{1b}[0m, \u{1b}[36m10\u{1b}[0m\u{1b}[35m)\u{1b}[0m = \u{1b}[33m?\u{1b}[0m");
+    }
+}
