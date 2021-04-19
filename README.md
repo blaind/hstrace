@@ -5,8 +5,11 @@ Syscall tracing CLI & library
 [![Latest Version](https://img.shields.io/crates/v/hstrace.svg)](https://crates.io/crates/hstrace)
 [![Rust Documentation](https://docs.rs/hstrace/badge.svg)](https://docs.rs/hstrace)
 ![License](https://img.shields.io/crates/l/hstrace.svg)
+[![Lines of Code](https://tokei.rs/b1/github/blaind/hstrace?category=code)](https://github.com/blaind/hstrace)
 
 Syscall tracing from command line and as a library. See the design draft: https://github.com/blaind/hstrace/blob/master/docs/01_hstrace_plan.md
+
+Requires Linux kernel 5.3 or later (uses `PTRACE_GET_SYSCALL_INFO` API)
 
 **This is a WIP implementation, and not production ready. Might not be finished**. Multiple issues exist: 1) codebase is not ready to be expanded yet, major refactoring is needed especially for the `AV` and `Value` structs to be more generic, 2) attach to process is not instant, some calls are missed at beginning, 3) not all syscalls are implemented, 4) cross-platform support is missing, 5) as a comparison, `strace` codebase is over 200k LoC in total (incl comments), so finishing the work is quite an undertaking
 
