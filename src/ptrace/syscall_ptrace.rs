@@ -241,7 +241,7 @@ impl Tracer for SyscallPtrace {
 
         let ret_bytes = unsafe {
             libc::ptrace(
-                from_c::PTRACE_GET_SYSCALL_INFO,
+                from_c::__ptrace_request_PTRACE_GET_SYSCALL_INFO,
                 libc::pid_t::from(Pid::from_raw(self.current_pid as i32)),
                 mem::size_of::<from_c::ptrace_syscall_info>(),
                 data_ptr,

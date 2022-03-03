@@ -46,13 +46,13 @@ impl Tracer for MockPtrace {
 
     fn get_ptrace(
         &mut self,
-        data_ptr: *mut from_c::ptrace_syscall_info,
+        data_ptr: *mut from_c::struct_ptrace_syscall_info,
     ) -> Result<GetPtraceInfo, TraceError> {
         // safety: mock_ptrace is used only in fuzz-testing of the library, not at production build
         let slice = unsafe {
             std::slice::from_raw_parts_mut(
                 data_ptr as *mut u8,
-                mem::size_of::<from_c::ptrace_syscall_info>(),
+                mem::size_of::<from_c::struct_ptrace_syscall_info>(),
             )
         };
 
